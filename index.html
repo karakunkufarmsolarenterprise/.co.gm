@@ -1,15 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Karakunku Farm – Solar‑Agricultural Enterprise</title>
     <style>
         /* ----- GLOBAL RESET & BASE ----- */
-        * { box-sizing: border-box; margin: 0; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+        }
 
         body {
-            /* Light golden yellow + earth + white + green – kept as requested */
             background: linear-gradient(145deg, #FFF9E6 0%, #F5E6CA 40%, #EAF5E9 100%);
             font-family: 'Segoe UI', Roboto, Arial, sans-serif;
             margin: 0;
@@ -40,7 +42,7 @@
             font-size: 2.4rem;
             letter-spacing: 2px;
             font-weight: 700;
-            text-shadow: 0 3px 6px rgba(0,0,0,0.3);
+            text-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
         }
         header h1 span {
             color: #FFB300;
@@ -54,7 +56,7 @@
             justify-content: center;
             gap: 2px;
             padding: 6px 10px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             border-bottom: 4px solid #D84315;
         }
         nav a {
@@ -83,7 +85,7 @@
             border-radius: 20px;
             padding: 28px 32px;
             margin: 28px 0;
-            box-shadow: 
+            box-shadow:
                 0 8px 28px rgba(60, 40, 20, 0.10),
                 0 2px 0 0 #C5A87C inset,
                 0 0 0 2px #E8DCC8 inset;
@@ -92,7 +94,7 @@
         }
         section:hover {
             transform: translateY(-4px);
-            box-shadow: 
+            box-shadow:
                 0 14px 40px rgba(60, 40, 20, 0.15),
                 0 2px 0 0 #D84315 inset,
                 0 0 0 2px #E8DCC8 inset;
@@ -134,7 +136,8 @@
             padding-left: 14px;
         }
 
-        p, li {
+        p,
+        li {
             color: #2C3A2C;
             line-height: 1.8;
             font-size: 1.05rem;
@@ -180,31 +183,238 @@
             border-bottom-color: #5D1E06;
         }
 
-        /* ----- GALLERY (updated: show full images without cropping) ----- */
+        /* ----- GALLERY (clickable thumbnails) ----- */
         .gallery {
             display: flex;
             flex-wrap: wrap;
-            gap: 18px;
+            gap: 20px;
             justify-content: center;
             margin-top: 15px;
         }
-        .gallery img {
-            width: 200px;
-            height: 200px;
-            object-fit: contain;    /* <-- shows entire image, no cropping */
-            background-color: #ede8dd; /* subtle background for letterboxing */
+        .gallery-item {
+            flex: 0 0 auto;
+            cursor: pointer;
             border-radius: 16px;
-            box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+            overflow: hidden;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
             border: 4px solid #E8DCC8;
-            transition: transform 0.25s, box-shadow 0.25s;
+            transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
+            background: #d6cdbb;
+            line-height: 0;
+            /* remove extra space */;
         }
-        .gallery img:hover {
-            transform: scale(1.05) rotate(-1deg);
-            box-shadow: 0 12px 28px rgba(0,0,0,0.18);
+        .gallery-item:hover {
+            transform: scale(1.04) rotate(-1deg);
+            box-shadow: 0 14px 32px rgba(0, 0, 0, 0.20);
             border-color: #FFB300;
         }
+        .gallery-item img {
+            display: block;
+            width: 200px;
+            height: 200px;
+            object-fit: cover;
+            transition: filter 0.2s;
+        }
+        .gallery-item:hover img {
+            filter: brightness(1.05);
+        }
 
-        /* ----- FOOTER ----- */
+        /* ----- LIGHTBOX / MODAL ----- */
+        #lightbox {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.88);
+            backdrop-filter: blur(6px);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            padding: 30px;
+            box-sizing: border-box;
+            animation: fadeIn 0.25s ease;
+            cursor: zoom-out;
+        }
+        #lightbox.active {
+            display: flex;
+        }
+
+        #lightbox .lb-inner {
+            position: relative;
+            max-width: 95vw;
+            max-height: 92vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: default;
+        }
+
+        #lightbox .lb-inner img {
+            display: block;
+            max-width: 95vw;
+            max-height: 88vh;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+            border: 3px solid rgba(255, 255, 255, 0.15);
+            background: #1a1a1a;
+            image-rendering: auto;
+            /* keep native quality */;
+        }
+
+        #lightbox .lb-close {
+            position: absolute;
+            top: -14px;
+            right: -14px;
+            width: 50px;
+            height: 50px;
+            background: #D84315;
+            border: none;
+            border-radius: 50%;
+            color: #fff;
+            font-size: 28px;
+            line-height: 50px;
+            text-align: center;
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+            transition: transform 0.2s, background 0.2s;
+            font-weight: 700;
+            padding: 0;
+            z-index: 10;
+        }
+        #lightbox .lb-close:hover {
+            background: #BF360C;
+            transform: scale(1.12);
+        }
+
+        #lightbox .lb-counter {
+            position: absolute;
+            bottom: -44px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1rem;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 6px 18px;
+            border-radius: 30px;
+            letter-spacing: 0.5px;
+            backdrop-filter: blur(4px);
+            white-space: nowrap;
+        }
+
+        #lightbox .lb-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 100%;
+            pointer-events: none;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 10px;
+            box-sizing: border-box;
+        }
+        #lightbox .lb-nav button {
+            pointer-events: auto;
+            background: rgba(0, 0, 0, 0.5);
+            border: none;
+            color: #fff;
+            font-size: 2.4rem;
+            width: 54px;
+            height: 54px;
+            border-radius: 50%;
+            cursor: pointer;
+            backdrop-filter: blur(4px);
+            transition: background 0.2s, transform 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 300;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        #lightbox .lb-nav button:hover {
+            background: rgba(216, 67, 21, 0.8);
+            transform: scale(1.08);
+        }
+        #lightbox .lb-nav button:active {
+            transform: scale(0.92);
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.96);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* responsive overrides */
+        @media (max-width: 700px) {
+            body {
+                padding: 10px;
+            }
+            section {
+                padding: 18px 14px;
+                margin: 16px 0;
+            }
+            h2 {
+                font-size: 1.6rem;
+            }
+            h2::after {
+                display: none;
+            }
+            nav a {
+                padding: 8px 12px;
+                font-size: 0.8rem;
+            }
+            .gallery-item img {
+                width: 150px;
+                height: 150px;
+            }
+            header h1 {
+                font-size: 1.8rem;
+            }
+            #lightbox {
+                padding: 14px;
+            }
+            #lightbox .lb-close {
+                top: -8px;
+                right: -8px;
+                width: 44px;
+                height: 44px;
+                font-size: 24px;
+                line-height: 44px;
+            }
+            #lightbox .lb-nav button {
+                width: 44px;
+                height: 44px;
+                font-size: 1.8rem;
+            }
+            #lightbox .lb-counter {
+                bottom: -36px;
+                font-size: 0.85rem;
+                padding: 4px 14px;
+            }
+        }
+        @media (max-width: 500px) {
+            .gallery-item img {
+                width: 110px;
+                height: 110px;
+            }
+            #lightbox .lb-nav button {
+                width: 38px;
+                height: 38px;
+                font-size: 1.4rem;
+            }
+        }
+
+        /* footer */
         footer {
             background: #1E3A1E;
             color: #f5f0e0;
@@ -219,191 +429,341 @@
         footer span {
             color: #FFB300;
         }
-
-        @media (max-width: 700px) {
-            body { padding: 10px; }
-            section { padding: 18px 14px; margin: 16px 0; }
-            h2 { font-size: 1.6rem; }
-            h2::after { display: none; }
-            nav a { padding: 8px 12px; font-size: 0.8rem; }
-            .gallery img { width: 140px; height: 140px; }
-            header h1 { font-size: 1.8rem; }
-        }
-        @media (max-width: 500px) {
-            .gallery img { width: 110px; height: 110px; }
-        }
     </style>
 </head>
 <body>
-<div class="container">
+    <div class="container">
 
-    <header>
-        <h1>☀️ <span>Karakunku</span> Farm</h1>
-        <p style="margin:6px 0 0; font-size:1.2rem; opacity:0.9;">Solar‑Agricultural Enterprise · Jarra Barrow Kunda, LRR</p>
-    </header>
+        <header>
+            <h1>☀️ <span>Karakunku</span> Farm</h1>
+            <p style="margin:6px 0 0; font-size:1.2rem; opacity:0.9;">Solar‑Agricultural Enterprise · Jarra Barrow Kunda, LRR</p>
+        </header>
 
-    <nav>
-        <a href="#home">Home</a>
-        <a href="#about">About</a>
-        <a href="#challenge">Challenge</a>
-        <a href="#solution">Our Approach</a>
-        <a href="#market">Market</a>
-        <a href="#operations">Operations</a>
-        <a href="#team">Team</a>
-        <a href="#financials">Financials</a>
-        <a href="#future">Future</a>
-        <a href="#gallery">Gallery</a>
-        <a href="#contact">Contact</a>
-    </nav>
+        <nav>
+            <a href="#home">Home</a>
+            <a href="#about">About</a>
+            <a href="#challenge">Challenge</a>
+            <a href="#solution">Our Approach</a>
+            <a href="#market">Market</a>
+            <a href="#operations">Operations</a>
+            <a href="#team">Team</a>
+            <a href="#financials">Financials</a>
+            <a href="#future">Future</a>
+            <a href="#gallery">Gallery</a>
+            <a href="#contact">Contact</a>
+        </nav>
 
-    <!-- ===== HOME ===== -->
-    <section id="home">
-        <h2>🌱 Welcome to KARAKUNKU FARM
-SOLAR-AGRICULTURAL ENTERPRISE
-</h2>
-        <p><strong>Karakunku Farm</strong> is a transformative solar‑powered agricultural demonstration and service enterprise based in <strong>Jarra Barrow Kunda, Lower River Region</strong>, The Gambia. We address two critical challenges: energy poverty in farming communities and the severe seasonal shortage of fresh vegetables caused by reliance on rain‑fed agriculture.</p>
-        <p>Our dual business model operates a commercial vegetable farm using solar‑powered irrigation and cold storage for year‑round production, while also serving as a solar service provider – demonstrating, selling, installing, and maintaining solar water pumps, home systems, and cold storage for other farmers and rural households.</p>
-        <p>Our farm is a living laboratory where farmers see solar technology working in real conditions. This “seeing‑is‑believing” approach is our most powerful marketing tool and addresses the primary barrier to solar adoption in rural areas.</p>
-        <p style="margin-top:20px;"><a href="#contact" class="cta-btn">📬 Get in Touch</a></p>
-    </section>
+        <!-- ===== HOME ===== -->
+        <section id="home">
+            <h2>🌱 Welcome to KARAKUNKU FARM SOLAR-AGRICULTURAL ENTERPRISE</h2>
+            <p><strong>Karakunku Farm</strong> is a transformative solar‑powered agricultural demonstration and service enterprise based in <strong>Jarra Barrow Kunda, Lower River Region</strong>, The Gambia. We address two critical challenges: energy poverty in farming communities and the severe seasonal shortage of fresh vegetables caused by reliance on rain‑fed agriculture.</p>
+            <p>Our dual business model operates a commercial vegetable farm using solar‑powered irrigation and cold storage for year‑round production, while also serving as a solar service provider – demonstrating, selling, installing, and maintaining solar water pumps, home systems, and cold storage for other farmers and rural households.</p>
+            <p>Our farm is a living laboratory where farmers see solar technology working in real conditions. This “seeing‑is‑believing” approach is our most powerful marketing tool and addresses the primary barrier to solar adoption in rural areas.</p>
+            <p style="margin-top:20px;"><a href="#contact" class="cta-btn">📬 Get in Touch</a></p>
+        </section>
 
-    <!-- ===== ABOUT ===== -->
-    <section id="about">
-        <h2>📖 About Us</h2>
-        <p><strong>KARAKUNKU FARM
-SOLAR-AGRICULTURAL ENTERPRISE
-</strong> was established in 2020 by <strong>Lamin Ceesay</strong>, a practical farmer with over five years of hands‑on experience in vegetable production and farm management. The farm is situated on fertile land in Jarra Barrow Kunda, an area with strong agricultural potential but severely limited access to water infrastructure and electricity.</p>
-        <p>Through multiple planting cycles, we have gained invaluable experience in crop selection, market timing, production planning, and customer relationship management. We have built a loyal customer base among local households, market vendors, and food businesses.</p>
-        <p><strong>Vision:</strong> To become The Gambia’s leading provider of solar‑powered agricultural solutions, transforming rural farming communities through clean, affordable, and reliable energy access.</p>
-        <p><strong>Mission:</strong> To empower rural Gambian farmers with solar technology that enables sustainable, profitable agriculture while operating a commercially viable enterprise that demonstrates the power of clean energy.</p>
-        <p><strong>Legal Structure:</strong> Sole proprietorship formally registered in The Gambia under the ownership of Lamin Ceesay, with a dedicated bank account and proper financial records.</p>
-    </section>
+        <!-- ===== ABOUT ===== -->
+        <section id="about">
+            <h2>📖 About Us</h2>
+            <p><strong>KARAKUNKU FARM SOLAR-AGRICULTURAL ENTERPRISE</strong> was established in 2020 by <strong>Lamin Ceesay</strong>, a practical farmer with over five years of hands‑on experience in vegetable production and farm management. The farm is situated on fertile land in Jarra Barrow Kunda, an area with strong agricultural potential but severely limited access to water infrastructure and electricity.</p>
+            <p>Through multiple planting cycles, we have gained invaluable experience in crop selection, market timing, production planning, and customer relationship management. We have built a loyal customer base among local households, market vendors, and food businesses.</p>
+            <p><strong>Vision:</strong> To become The Gambia’s leading provider of solar‑powered agricultural solutions, transforming rural farming communities through clean, affordable, and reliable energy access.</p>
+            <p><strong>Mission:</strong> To empower rural Gambian farmers with solar technology that enables sustainable, profitable agriculture while operating a commercially viable enterprise that demonstrates the power of clean energy.</p>
+            <p><strong>Legal Structure:</strong> Sole proprietorship formally registered in The Gambia under the ownership of Lamin Ceesay, with a dedicated bank account and proper financial records.</p>
+        </section>
 
-    <!-- ===== CHALLENGE ===== -->
-    <section id="challenge">
-        <h2>⚠️ The Challenge We Solve</h2>
-        <p>Rural Gambia faces three interconnected challenges that Karakunku Farm addresses:</p>
-        <ul>
-            <li><strong>Energy Problem:</strong> Over 60% of rural households lack electricity. Farmers suffer high costs from diesel dependency – a typical pump consumes 500 litres per season, costing 25,000–40,000 GMD annually.</li>
-            <li><strong>Food Problem:</strong> The Gambia imports over 60% of its food. Most farmers rely on rainfall, leading to severe seasonal patterns – vegetable oversupply in the rainy season and acute shortages in the dry season, causing price volatility and food insecurity.</li>
-            <li><strong>Knowledge Gap:</strong> Rural farmers lack access to affordable, reliable solar products and trustworthy installation services. Many have been burned by low‑quality products or poor installation.</li>
-        </ul>
-        <p>Our integrated approach solves these problems by demonstrating, distributing, installing, and maintaining solar technology while producing fresh vegetables year‑round.</p>
-    </section>
+        <!-- ===== CHALLENGE ===== -->
+        <section id="challenge">
+            <h2>⚠️ The Challenge We Solve</h2>
+            <p>Rural Gambia faces three interconnected challenges that Karakunku Farm addresses:</p>
+            <ul>
+                <li><strong>Energy Problem:</strong> Over 60% of rural households lack electricity. Farmers suffer high costs from diesel dependency – a typical pump consumes 500 litres per season, costing 25,000–40,000 GMD annually.</li>
+                <li><strong>Food Problem:</strong> The Gambia imports over 60% of its food. Most farmers rely on rainfall, leading to severe seasonal patterns – vegetable oversupply in the rainy season and acute shortages in the dry season, causing price volatility and food insecurity.</li>
+                <li><strong>Knowledge Gap:</strong> Rural farmers lack access to affordable, reliable solar products and trustworthy installation services. Many have been burned by low‑quality products or poor installation.</li>
+            </ul>
+            <p>Our integrated approach solves these problems by demonstrating, distributing, installing, and maintaining solar technology while producing fresh vegetables year‑round.</p>
+        </section>
 
-    <!-- ===== OUR APPROACH ===== -->
-    <section id="solution">
-        <h2>💡 Our Solution</h2>
-        <ul>
-            <li><strong>Demonstration:</strong> Our farm is a living showroom where farmers see solar irrigation, lighting, and cold storage working in real agricultural conditions.</li>
-            <li><strong>Distribution:</strong> We source high‑quality, affordable solar equipment and offer flexible payment options through microfinance partnerships.</li>
-            <li><strong>Installation and Maintenance:</strong> Our trained technicians provide professional installation and ongoing maintenance services.</li>
-            <li><strong>Agricultural Production:</strong> Our farmers produce and supply fresh vegetables year‑round using solar‑powered irrigation, demonstrating commercial viability and meeting local demand.</li>
-        </ul>
-        <p>This integrated approach builds trust, reduces barriers to adoption, and creates a sustainable cycle of clean energy and food production.</p>
-    </section>
+        <!-- ===== OUR APPROACH ===== -->
+        <section id="solution">
+            <h2>💡 Our Solution</h2>
+            <ul>
+                <li><strong>Demonstration:</strong> Our farm is a living showroom where farmers see solar irrigation, lighting, and cold storage working in real agricultural conditions.</li>
+                <li><strong>Distribution:</strong> We source high‑quality, affordable solar equipment and offer flexible payment options through microfinance partnerships.</li>
+                <li><strong>Installation and Maintenance:</strong> Our trained technicians provide professional installation and ongoing maintenance services.</li>
+                <li><strong>Agricultural Production:</strong> Our farmers produce and supply fresh vegetables year‑round using solar‑powered irrigation, demonstrating commercial viability and meeting local demand.</li>
+            </ul>
+            <p>This integrated approach builds trust, reduces barriers to adoption, and creates a sustainable cycle of clean energy and food production.</p>
+        </section>
 
-    <!-- ===== MARKET ===== -->
-    <section id="market">
-        <h2>📊 Market Opportunity</h2>
-        <p><strong>Target Customers:</strong></p>
-        <ul>
-            <li><strong>Primary (Solar):</strong> Smallholder farmers, rural off‑grid households, women’s farming cooperatives, and community gardens in Lower River Region.</li>
-            <li><strong>Secondary (Vegetables):</strong> Local households, market vendors in Soma, retail shops, food businesses (restaurants, caterers), and institutional buyers (schools, hospitals).</li>
-        </ul>
-        <p><strong>Competitive Advantage:</strong> Our unique combination of farming expertise and solar knowledge, rural presence, demonstration farm, after‑sales support, and local trust gives us an unbeatable edge over urban‑based solar companies and seasonal smallholder farmers.</p>
-        <p><strong>Market Trends:</strong> Rising demand for fresh vegetables, growing preference for local produce, government support for renewable energy, increasing fuel costs, and climate change making rain‑fed farming unreliable all work in our favour.</p>
-    </section>
+        <!-- ===== MARKET ===== -->
+        <section id="market">
+            <h2>📊 Market Opportunity</h2>
+            <p><strong>Target Customers:</strong></p>
+            <ul>
+                <li><strong>Primary (Solar):</strong> Smallholder farmers, rural off‑grid households, women’s farming cooperatives, and community gardens in Lower River Region.</li>
+                <li><strong>Secondary (Vegetables):</strong> Local households, market vendors in Soma, retail shops, food businesses (restaurants, caterers), and institutional buyers (schools, hospitals).</li>
+            </ul>
+            <p><strong>Competitive Advantage:</strong> Our unique combination of farming expertise and solar knowledge, rural presence, demonstration farm, after‑sales support, and local trust gives us an unbeatable edge over urban‑based solar companies and seasonal smallholder farmers.</p>
+            <p><strong>Market Trends:</strong> Rising demand for fresh vegetables, growing preference for local produce, government support for renewable energy, increasing fuel costs, and climate change making rain‑fed farming unreliable all work in our favour.</p>
+        </section>
 
-    <!-- ===== OPERATIONS ===== -->
-    <section id="operations">
-        <h2>⚙️ Operations &amp; Production</h2>
-        <p><strong>Agricultural Products:</strong> We produce hot pepper, okra, onion, and cucumber using solar‑powered drip irrigation. Year‑round production ensures consistent supply.</p>
-        <p><strong>Solar Products &amp; Services:</strong> We offer solar water pumps, solar home systems, solar cold storage, and complete farm electrification packages. We also provide professional installation, maintenance, and training.</p>
-        <p><strong>Production Process:</strong> Land preparation → planting → irrigation (solar drip) → crop management → harvesting → post‑harvest handling (cold storage) → distribution.</p>
-        <p><strong>Solar Service Process:</strong> Customer identification → needs assessment → system design → sales & financing → installation → after‑sales support.</p>
-        <p>Our farm serves as a demonstration facility where visitors see all systems working together in an integrated, sustainable model.</p>
-    </section>
+        <!-- ===== OPERATIONS ===== -->
+        <section id="operations">
+            <h2>⚙️ Operations &amp; Production</h2>
+            <p><strong>Agricultural Products:</strong> We produce hot pepper, okra, onion, and cucumber using solar‑powered drip irrigation. Year‑round production ensures consistent supply.</p>
+            <p><strong>Solar Products &amp; Services:</strong> We offer solar water pumps, solar home systems, solar cold storage, and complete farm electrification packages. We also provide professional installation, maintenance, and training.</p>
+            <p><strong>Production Process:</strong> Land preparation → planting → irrigation (solar drip) → crop management → harvesting → post‑harvest handling (cold storage) → distribution.</p>
+            <p><strong>Solar Service Process:</strong> Customer identification → needs assessment → system design → sales & financing → installation → after‑sales support.</p>
+            <p>Our farm serves as a demonstration facility where visitors see all systems working together in an integrated, sustainable model.</p>
+        </section>
 
-    <!-- ===== TEAM ===== -->
-    <section id="team">
-        <h2>👥 Management &amp; Staffing</h2>
-        <p><strong>Owner &amp; General Manager:</strong> Lamin Ceesay – responsible for strategic direction, operations, marketing, and customer relations.</p>
-        <p><strong>Farm Supervisor:</strong> Oversees daily farm operations, crop planning, planting schedules, harvest management, and quality control.</p>
-        <p><strong>Solar Technician:</strong> Manages solar installations, maintenance services, customer training, and equipment inventory.</p>
-        <p><strong>Farm Workers:</strong> Handle planting, crop management, harvesting, packaging, and deliveries.</p>
-        <p><strong>Staffing Plan:</strong> Year 1 – 5 staff; Year 2 – 8 staff; Year 3 – 12 staff. We prioritise hiring local youth and women, and we provide continuous training in solar installation, agriculture, and business management.</p>
-    </section>
+        <!-- ===== TEAM ===== -->
+        <section id="team">
+            <h2>👥 Management &amp; Staffing</h2>
+            <p><strong>Owner &amp; General Manager:</strong> Lamin Ceesay – responsible for strategic direction, operations, marketing, and customer relations.</p>
+            <p><strong>Farm Supervisor:</strong> Oversees daily farm operations, crop planning, planting schedules, harvest management, and quality control.</p>
+            <p><strong>Solar Technician:</strong> Manages solar installations, maintenance services, customer training, and equipment inventory.</p>
+            <p><strong>Farm Workers:</strong> Handle planting, crop management, harvesting, packaging, and deliveries.</p>
+            <p><strong>Staffing Plan:</strong> Year 1 – 5 staff; Year 2 – 8 staff; Year 3 – 12 staff. We prioritise hiring local youth and women, and we provide continuous training in solar installation, agriculture, and business management.</p>
+        </section>
 
-    <!-- ===== FINANCIALS ===== -->
-    <section id="financials">
-        <h2>💰 Financials</h2>
-        <p><strong>Funding Requested (ROGEAP Matching Grant):</strong> 25,000 USD</p>
-        <p><strong>Co‑financing Committed (25%):</strong> 6,250 USD (5,000 from Youth Enterprise Development Fund + 1,250 from microfinance loan)</p>
-        <p><strong>Total Project Cost:</strong> 31,250 USD</p>
-        <p><strong>Project Budget (key items):</strong></p>
-        <ul>
-            <li>Solar panels, batteries, inverters: 15,500 USD</li>
-            <li>Borehole &amp; solar pump: 5,500 USD</li>
-            <li>Drip irrigation (3 ha): 3,500 USD</li>
-            <li>Solar cold storage: 3,500 USD</li>
-            <li>Inventory &amp; tools: 2,500 USD</li>
-            <li>Training &amp; contingency: 2,750 USD</li>
-        </ul>
-        <p><strong>Revenue Projections (GMD):</strong></p>
-        <ul>
-            <li>Year 1: 900,000 (vegetables 500k, solar products 300k, services 100k)</li>
-            <li>Year 2: 1,600,000</li>
-            <li>Year 3: 2,600,000</li>
-        </ul>
-        <p><strong>Profit &amp; Loss (after tax):</strong></p>
-        <ul>
-            <li>Year 1: Net profit 168,750 GMD (18.8% margin)</li>
-            <li>Year 2: Net profit 363,750 GMD (22.7% margin)</li>
-            <li>Year 3: Net profit 645,000 GMD (24.8% margin)</li>
-        </ul>
-        <p>These projections demonstrate strong financial viability and growth potential.</p>
-    </section>
+        <!-- ===== FINANCIALS ===== -->
+        <section id="financials">
+            <h2>💰 Financials</h2>
+            <p><strong>Funding Requested (ROGEAP Matching Grant):</strong> 25,000 USD</p>
+            <p><strong>Co‑financing Committed (25%):</strong> 6,250 USD (5,000 from Youth Enterprise Development Fund + 1,250 from microfinance loan)</p>
+            <p><strong>Total Project Cost:</strong> 31,250 USD</p>
+            <p><strong>Project Budget (key items):</strong></p>
+            <ul>
+                <li>Solar panels, batteries, inverters: 15,500 USD</li>
+                <li>Borehole &amp; solar pump: 5,500 USD</li>
+                <li>Drip irrigation (3 ha): 3,500 USD</li>
+                <li>Solar cold storage: 3,500 USD</li>
+                <li>Inventory &amp; tools: 2,500 USD</li>
+                <li>Training &amp; contingency: 2,750 USD</li>
+            </ul>
+            <p><strong>Revenue Projections (GMD):</strong></p>
+            <ul>
+                <li>Year 1: 900,000 (vegetables 500k, solar products 300k, services 100k)</li>
+                <li>Year 2: 1,600,000</li>
+                <li>Year 3: 2,600,000</li>
+            </ul>
+            <p><strong>Profit &amp; Loss (after tax):</strong></p>
+            <ul>
+                <li>Year 1: Net profit 168,750 GMD (18.8% margin)</li>
+                <li>Year 2: Net profit 363,750 GMD (22.7% margin)</li>
+                <li>Year 3: Net profit 645,000 GMD (24.8% margin)</li>
+            </ul>
+            <p>These projections demonstrate strong financial viability and growth potential.</p>
+        </section>
 
-    <!-- ===== FUTURE ===== -->
-    <section id="future">
-        <h2>🚀 Future Plans</h2>
-        <p><strong>Short‑Term (Year 1):</strong> Install comprehensive solar electrification, expand to 1 ha, establish showroom, train 3 technicians, reach 30 farming households.</p>
-        <p><strong>Medium‑Term (Years 2‑3):</strong> Expand to 3 ha, reach 150 households, partner with microfinance institutions, employ 10 staff, establish a regional training centre, achieve 1.5 million GMD annual revenue.</p>
-        <p><strong>Long‑Term (Years 4‑5):</strong> Become the recognised solar‑agricultural brand across Lower River Region and beyond; develop a pay‑as‑you‑go model; establish branches in two additional regions; create 50 direct and indirect jobs; become a model for solar‑powered agriculture in West Africa.</p>
-    </section>
+        <!-- ===== FUTURE ===== -->
+        <section id="future">
+            <h2>🚀 Future Plans</h2>
+            <p><strong>Short‑Term (Year 1):</strong> Install comprehensive solar electrification, expand to 1 ha, establish showroom, train 3 technicians, reach 30 farming households.</p>
+            <p><strong>Medium‑Term (Years 2‑3):</strong> Expand to 3 ha, reach 150 households, partner with microfinance institutions, employ 10 staff, establish a regional training centre, achieve 1.5 million GMD annual revenue.</p>
+            <p><strong>Long‑Term (Years 4‑5):</strong> Become the recognised solar‑agricultural brand across Lower River Region and beyond; develop a pay‑as‑you‑go model; establish branches in two additional regions; create 50 direct and indirect jobs; become a model for solar‑powered agriculture in West Africa.</p>
+        </section>
 
-    <!-- ===== GALLERY – All 7 images, fully visible ===== -->
-    <section id="gallery">
-        <h2>🖼️ Gallery</h2>
-        <div class="gallery">
-            <!-- The inline style attributes have been removed – the gallery CSS now handles sizing and ensures full visibility -->
-            <img src="https://github.com/karakunkufarmsolarenterprise/.co.gm/blob/main/IMG-20260813-WA0002.jpg?raw=true" alt="Farm image 1">
-            <img src="https://github.com/karakunkufarmsolarenterprise/.co.gm/blob/main/IMG-20260813-WA0001.jpg?raw=true" alt="Farm image 2">
-            <img src="https://github.com/karakunkufarmsolarenterprise/.co.gm/blob/main/IMG-20260701-WA0005.jpg?raw=true" alt="Farm image 3">
-            <img src="https://github.com/karakunkufarmsolarenterprise/.co.gm/blob/main/IMG-20260331-WA0031.jpg?raw=true" alt="Farm image 4">
-            <img src="https://github.com/karakunkufarmsolarenterprise/.co.gm/blob/main/IMG-20260331-WA0030.jpg?raw=true" alt="Farm image 5">
-            <img src="https://github.com/karakunkufarmsolarenterprise/.co.gm/blob/main/IMG-20260331-WA0029.jpg?raw=true" alt="Farm image 6">
-            <img src="https://github.com/karakunkufarmsolarenterprise/.co.gm/blob/main/IMG-20260813-WA0012.jpg?raw=true" alt="Farm image 7">
+        <!-- ===== GALLERY – clickable thumbnails with lightbox ===== -->
+        <section id="gallery">
+            <h2>🖼️ Gallery</h2>
+            <div class="gallery" id="galleryGrid">
+                <!-- Each thumbnail is wrapped in a .gallery-item -->
+                <div class="gallery-item" data-index="0">
+                    <img src="https://github.com/karakunkufarmsolarenterprise/.co.gm/blob/main/IMG-20260813-WA0002.jpg?raw=true" alt="Farm view 1" loading="lazy" />
+                </div>
+                <div class="gallery-item" data-index="1">
+                    <img src="https://github.com/karakunkufarmsolarenterprise/.co.gm/blob/main/IMG-20260813-WA0001.jpg?raw=true" alt="Farm view 2" loading="lazy" />
+                </div>
+                <div class="gallery-item" data-index="2">
+                    <img src="https://github.com/karakunkufarmsolarenterprise/.co.gm/blob/main/IMG-20260701-WA0005.jpg?raw=true" alt="Farm view 3" loading="lazy" />
+                </div>
+                <div class="gallery-item" data-index="3">
+                    <img src="https://github.com/karakunkufarmsolarenterprise/.co.gm/blob/main/IMG-20260331-WA0031.jpg?raw=true" alt="Farm view 4" loading="lazy" />
+                </div>
+                <div class="gallery-item" data-index="4">
+                    <img src="https://github.com/karakunkufarmsolarenterprise/.co.gm/blob/main/IMG-20260331-WA0030.jpg?raw=true" alt="Farm view 5" loading="lazy" />
+                </div>
+                <div class="gallery-item" data-index="5">
+                    <img src="https://github.com/karakunkufarmsolarenterprise/.co.gm/blob/main/IMG-20260331-WA0029.jpg?raw=true" alt="Farm view 6" loading="lazy" />
+                </div>
+                <div class="gallery-item" data-index="6">
+                    <img src="https://github.com/karakunkufarmsolarenterprise/.co.gm/blob/main/IMG-20260813-WA0012.jpg?raw=true" alt="Farm view 7" loading="lazy" />
+                </div>
+            </div>
+            <p style="margin-top:14px; font-size:0.95rem; opacity:0.7; text-align:center;">🖱️ Click any image to zoom &amp; browse</p>
+        </section>
+
+        <!-- ===== CONTACT ===== -->
+        <section id="contact">
+            <h2>📬 Contact Us</h2>
+            <p>We look forward to hearing from you – whether you are a farmer, customer, partner, or investor.</p>
+            <p><strong>📍 Location:</strong> Jarra Barrow Kunda, Lower River Region, The Gambia</p>
+            <p><strong>📞 Phone:</strong> <a href="tel:+2203491934">349 1934</a></p>
+            <p><strong>📧 Email:</strong> <a href="mailto:karakunkufarm50@gmail.com">karakunkunutr50@gmail.com</a> (placeholder – use phone for immediate contact)</p>
+            <p><strong>💬 WhatsApp:</strong> <a href="https://wa.me/+2203491934" target="_blank">+220 349 1934</a></p>
+        </section>
+
+        <footer>
+            <p>© 2026 <span>KARAKUNKU FARM SOLAR-AGRICULTURAL ENTERPRISE</span> – Powering a brighter future for Gambian farmers. ☀️</p>
+        </footer>
+
+    </div>
+
+    <!-- ===== LIGHTBOX ===== -->
+    <div id="lightbox" role="dialog" aria-label="Image viewer">
+        <div class="lb-inner">
+            <button class="lb-close" id="lbClose" aria-label="Close">&times;</button>
+            <img id="lbImage" src="" alt="Zoomed view" />
+            <div class="lb-nav">
+                <button id="lbPrev" aria-label="Previous image">‹</button>
+                <button id="lbNext" aria-label="Next image">›</button>
+            </div>
+            <div class="lb-counter" id="lbCounter">1 / 7</div>
         </div>
-    </section>
+    </div>
 
-    <!-- ===== CONTACT ===== -->
-    <section id="contact">
-        <h2>📬 Contact Us</h2>
-        <p>We look forward to hearing from you – whether you are a farmer, customer, partner, or investor.</p>
-        <p><strong>📍 Location:</strong> Jarra Barrow Kunda, Lower River Region, The Gambia</p>
-        <p><strong>📞 Phone:</strong> <a href="tel:+2203491934">349 1934</a></p>
-        <p><strong>📧 Email:</strong> <a href="mailto:karakunkufarm50@gmail.com">karakunkunutr50@gmail.com</a> (placeholder – use phone for immediate contact)</p>
-        <p><strong>💬 WhatsApp:</strong> <a href="https://wa.me/+2203491934" target="_blank">+220 349 1934</a></p>
-    </section>
+    <script>
+        (function() {
+            'use strict';
 
-    <footer>
-        <p>© 2026 <span>KARAKUNKU FARM
-SOLAR-AGRICULTURAL ENTERPRISE
-</span> – Powering a brighter future for Gambian farmers. ☀️</p>
-    </footer>
+            // ---- gather gallery items ----
+            const items = document.querySelectorAll('.gallery-item');
+            const imageUrls = [];
+            items.forEach(el => {
+                const img = el.querySelector('img');
+                if (img) imageUrls.push(img.src);
+            });
 
-</div>
+            if (imageUrls.length === 0) return;
+
+            // ---- lightbox elements ----
+            const lightbox = document.getElementById('lightbox');
+            const lbImage = document.getElementById('lbImage');
+            const lbCounter = document.getElementById('lbCounter');
+            const lbClose = document.getElementById('lbClose');
+            const lbPrev = document.getElementById('lbPrev');
+            const lbNext = document.getElementById('lbNext');
+
+            let currentIndex = 0;
+            let isOpen = false;
+
+            // ---- open lightbox at given index ----
+            function openLightbox(index) {
+                if (index < 0) index = imageUrls.length - 1;
+                if (index >= imageUrls.length) index = 0;
+                currentIndex = index;
+
+                lbImage.src = imageUrls[currentIndex];
+                lbImage.alt = 'Image ' + (currentIndex + 1);
+                lbCounter.textContent = (currentIndex + 1) + ' / ' + imageUrls.length;
+
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden';
+                isOpen = true;
+
+                // Preload neighbours for smoother navigation
+                preloadImage(currentIndex + 1);
+                preloadImage(currentIndex - 1);
+            }
+
+            function preloadImage(index) {
+                if (index < 0 || index >= imageUrls.length) return;
+                const img = new Image();
+                img.src = imageUrls[index];
+            }
+
+            function closeLightbox() {
+                lightbox.classList.remove('active');
+                document.body.style.overflow = '';
+                isOpen = false;
+            }
+
+            // ---- navigation ----
+            function showPrev() {
+                openLightbox(currentIndex - 1);
+            }
+
+            function showNext() {
+                openLightbox(currentIndex + 1);
+            }
+
+            // ---- attach click events to each thumbnail ----
+            items.forEach((el, idx) => {
+                el.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    openLightbox(idx);
+                });
+                // also make it feel clickable
+                el.style.cursor = 'pointer';
+            });
+
+            // ---- close button ----
+            lbClose.addEventListener('click', closeLightbox);
+
+            // ---- overlay click (background) closes ----
+            lightbox.addEventListener('click', function(e) {
+                if (e.target === lightbox) {
+                    closeLightbox();
+                }
+            });
+
+            // ---- keyboard ----
+            document.addEventListener('keydown', function(e) {
+                if (!isOpen) return;
+                if (e.key === 'Escape') {
+                    closeLightbox();
+                    e.preventDefault();
+                } else if (e.key === 'ArrowLeft') {
+                    showPrev();
+                    e.preventDefault();
+                } else if (e.key === 'ArrowRight') {
+                    showNext();
+                    e.preventDefault();
+                }
+            });
+
+            // ---- navigation buttons ----
+            lbPrev.addEventListener('click', function(e) {
+                e.stopPropagation();
+                showPrev();
+            });
+            lbNext.addEventListener('click', function(e) {
+                e.stopPropagation();
+                showNext();
+            });
+
+            // ---- swipe support (touch) ----
+            let touchStartX = 0;
+            let touchStartY = 0;
+            lightbox.addEventListener('touchstart', function(e) {
+                const touch = e.touches[0];
+                touchStartX = touch.clientX;
+                touchStartY = touch.clientY;
+            }, { passive: true });
+
+            lightbox.addEventListener('touchend', function(e) {
+                if (!isOpen) return;
+                const touch = e.changedTouches[0];
+                const deltaX = touch.clientX - touchStartX;
+                const deltaY = touch.clientY - touchStartY;
+                if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 40) {
+                    if (deltaX < 0) showNext();
+                    else showPrev();
+                    e.preventDefault();
+                }
+            }, { passive: false });
+
+            // ---- prevent zoom on double-tap inside lightbox ----
+            lightbox.addEventListener('dblclick', function(e) {
+                e.preventDefault();
+            });
+
+            console.log('🌿 Karakunku Farm lightbox ready – ' + imageUrls.length + ' images loaded.');
+        })();
+    </script>
+
 </body>
 </html>
