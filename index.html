@@ -3,418 +3,407 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Gallery with Zoom</title>
+    <title>Karakunku Farm – Solar‑Agricultural Enterprise</title>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        /* ----- GLOBAL RESET & BASE ----- */
+        * { box-sizing: border-box; margin: 0; }
+
         body {
-            font-family: Arial, sans-serif;
-            background: #f4f4f4;
+            /* Light golden yellow + earth + white + green – kept as requested */
+            background: linear-gradient(145deg, #FFF9E6 0%, #F5E6CA 40%, #EAF5E9 100%);
+            font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+            margin: 0;
             padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
-        h1 {
+
+        .container {
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        /* ----- HEADER ----- */
+        header {
+            background: linear-gradient(135deg, #2E7D32, #1B5E20);
+            color: #fff8e7;
             text-align: center;
-            margin-bottom: 30px;
-            color: #333;
+            padding: 1.8rem 1rem;
+            border-radius: 20px 20px 0 0;
+            box-shadow: 0 8px 24px rgba(0, 40, 0, 0.25);
+            border-bottom: 6px solid #FFB300;
         }
-        /* Gallery Grid */
+        header h1 {
+            margin: 0;
+            font-size: 2.4rem;
+            letter-spacing: 2px;
+            font-weight: 700;
+            text-shadow: 0 3px 6px rgba(0,0,0,0.3);
+        }
+        header h1 span {
+            color: #FFB300;
+        }
+
+        /* ----- NAVIGATION ----- */
+        nav {
+            background: #2E4A2E;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 2px;
+            padding: 6px 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            border-bottom: 4px solid #D84315;
+        }
+        nav a {
+            display: block;
+            color: #f5f0e0;
+            padding: 12px 18px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            border-radius: 30px;
+            transition: all 0.25s;
+            letter-spacing: 0.3px;
+            background: transparent;
+        }
+        nav a:hover {
+            background: #D84315;
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(216, 67, 21, 0.4);
+        }
+
+        /* ----- SECTION CARDS (FRAMES) ----- */
+        section {
+            background: rgba(255, 252, 245, 0.92);
+            backdrop-filter: blur(3px);
+            border-radius: 20px;
+            padding: 28px 32px;
+            margin: 28px 0;
+            box-shadow: 
+                0 8px 28px rgba(60, 40, 20, 0.10),
+                0 2px 0 0 #C5A87C inset,
+                0 0 0 2px #E8DCC8 inset;
+            border: 2px solid #DCC9B0;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        section:hover {
+            transform: translateY(-4px);
+            box-shadow: 
+                0 14px 40px rgba(60, 40, 20, 0.15),
+                0 2px 0 0 #D84315 inset,
+                0 0 0 2px #E8DCC8 inset;
+        }
+
+        section::before {
+            content: '';
+            display: block;
+            height: 6px;
+            width: 80px;
+            background: linear-gradient(90deg, #FFB300, #D84315);
+            border-radius: 10px;
+            margin-bottom: 18px;
+        }
+
+        h2 {
+            color: #1E3A1E;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-top: 0;
+            margin-bottom: 0.4rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        h2::after {
+            content: '';
+            flex: 1;
+            height: 3px;
+            background: linear-gradient(90deg, #D84315, #FFB300, #2E7D32);
+            border-radius: 4px;
+            margin-left: 12px;
+        }
+        h3 {
+            color: #4A6A3A;
+            font-weight: 600;
+            margin-top: 22px;
+            border-left: 5px solid #FFB300;
+            padding-left: 14px;
+        }
+
+        p, li {
+            color: #2C3A2C;
+            line-height: 1.8;
+            font-size: 1.05rem;
+        }
+        a {
+            color: #B85C1A;
+            font-weight: 600;
+            text-decoration: none;
+            border-bottom: 2px solid transparent;
+            transition: border-color 0.2s;
+        }
+        a:hover {
+            border-bottom-color: #D84315;
+            text-decoration: none;
+        }
+
+        ul {
+            padding-left: 1.6rem;
+        }
+        ul li {
+            margin-bottom: 8px;
+            list-style-type: '🌿 ';
+            padding-left: 6px;
+        }
+        ul li strong {
+            color: #1B5E20;
+        }
+
+        .cta-btn {
+            background: #D84315;
+            color: #fff !important;
+            padding: 12px 30px;
+            border-radius: 40px;
+            display: inline-block;
+            font-weight: 700;
+            border-bottom: 4px solid #8D2F0A;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+        .cta-btn:hover {
+            background: #BF360C;
+            transform: scale(1.02);
+            border-bottom-color: #5D1E06;
+        }
+
+        /* ----- GALLERY (updated: show full images without cropping) ----- */
         .gallery {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 20px;
-            max-width: 1400px;
-            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 18px;
+            justify-content: center;
+            margin-top: 15px;
         }
         .gallery img {
-            width: 100%;
-            height: 250px;
-            object-fit: cover;
-            border-radius: 12px;
-            box-shadow: 0 6px 18px rgba(0,0,0,0.15);
-            cursor: pointer;
-            transition: transform 0.25s ease, box-shadow 0.25s ease;
+            width: 200px;
+            height: 200px;
+            object-fit: contain;    /* <-- shows entire image, no cropping */
+            background-color: #ede8dd; /* subtle background for letterboxing */
+            border-radius: 16px;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+            border: 4px solid #E8DCC8;
+            transition: transform 0.25s, box-shadow 0.25s;
         }
         .gallery img:hover {
-            transform: scale(1.03);
-            box-shadow: 0 10px 28px rgba(0,0,0,0.25);
+            transform: scale(1.05) rotate(-1deg);
+            box-shadow: 0 12px 28px rgba(0,0,0,0.18);
+            border-color: #FFB300;
         }
 
-        /* Modal overlay */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.92);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            padding: 20px;
-        }
-        .modal.active {
-            display: flex;
-        }
-
-        /* Close button */
-        .modal .close {
-            position: absolute;
-            top: 25px;
-            right: 40px;
-            font-size: 48px;
-            color: #fff;
-            cursor: pointer;
-            transition: 0.2s;
-            z-index: 10;
-            font-weight: 300;
-            line-height: 1;
-        }
-        .modal .close:hover {
-            color: #ccc;
-            transform: rotate(90deg);
-        }
-
-        /* Navigation arrows */
-        .modal .nav {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 50px;
-            color: #fff;
-            background: rgba(255,255,255,0.15);
-            padding: 12px 18px;
-            border-radius: 50%;
-            cursor: pointer;
-            user-select: none;
-            transition: 0.2s;
-            z-index: 10;
-            font-weight: 300;
-        }
-        .modal .nav:hover {
-            background: rgba(255,255,255,0.35);
-        }
-        .modal .prev { left: 20px; }
-        .modal .next { right: 20px; }
-
-        /* Image wrapper (for panning) */
-        .modal-image-wrapper {
-            width: 80%;
-            max-width: 1000px;
-            height: 70vh;
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-            border-radius: 8px;
-            background: #111;
-            touch-action: none; /* prevent touch scroll interference */
-        }
-        .modal-image-wrapper img {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-            cursor: grab;
-            transition: transform 0.1s ease;
-            transform: scale(1) translate(0px, 0px);
-            will-change: transform;
-        }
-        .modal-image-wrapper img:active {
-            cursor: grabbing;
-        }
-
-        /* Zoom controls */
-        .zoom-controls {
-            display: flex;
-            gap: 18px;
-            align-items: center;
-            margin-top: 20px;
-            background: rgba(0,0,0,0.6);
-            padding: 12px 28px;
-            border-radius: 50px;
-            backdrop-filter: blur(4px);
-        }
-        .zoom-controls button {
-            background: #fff;
-            border: none;
-            width: 40px;
-            height: 40px;
-            font-size: 24px;
-            font-weight: bold;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: 0.15s;
-            color: #222;
-        }
-        .zoom-controls button:hover {
-            background: #ddd;
-            transform: scale(1.05);
-        }
-        .zoom-controls span {
-            color: #fff;
-            font-size: 18px;
-            min-width: 60px;
+        /* ----- FOOTER ----- */
+        footer {
+            background: #1E3A1E;
+            color: #f5f0e0;
             text-align: center;
-            font-variant-numeric: tabular-nums;
-        }
-        .image-counter {
-            color: rgba(255,255,255,0.7);
-            font-size: 16px;
+            padding: 20px 16px;
+            border-radius: 0 0 20px 20px;
             margin-top: 10px;
+            border-top: 6px solid #FFB300;
+            font-size: 1rem;
+            width: 100%;
+        }
+        footer span {
+            color: #FFB300;
         }
 
-        /* Responsive */
-        @media (max-width: 768px) {
-            .modal-image-wrapper {
-                width: 95%;
-                height: 55vh;
-            }
-            .modal .nav {
-                font-size: 30px;
-                padding: 8px 12px;
-            }
-            .modal .prev { left: 8px; }
-            .modal .next { right: 8px; }
-            .modal .close {
-                top: 12px;
-                right: 18px;
-                font-size: 36px;
-            }
+        @media (max-width: 700px) {
+            body { padding: 10px; }
+            section { padding: 18px 14px; margin: 16px 0; }
+            h2 { font-size: 1.6rem; }
+            h2::after { display: none; }
+            nav a { padding: 8px 12px; font-size: 0.8rem; }
+            .gallery img { width: 140px; height: 140px; }
+            header h1 { font-size: 1.8rem; }
+        }
+        @media (max-width: 500px) {
+            .gallery img { width: 110px; height: 110px; }
         }
     </style>
 </head>
 <body>
+<div class="container">
 
-<h1>Karakunku Farm Solar Enterprise</h1>
+    <header>
+        <h1>☀️ <span>Karakunku</span> Farm</h1>
+        <p style="margin:6px 0 0; font-size:1.2rem; opacity:0.9;">Solar‑Agricultural Enterprise · Jarra Barrow Kunda, LRR</p>
+    </header>
 
-<div class="gallery" id="imageGallery">
-    <!-- All 7 images will be injected by JavaScript -->
+    <nav>
+        <a href="#home">Home</a>
+        <a href="#about">About</a>
+        <a href="#challenge">Challenge</a>
+        <a href="#solution">Our Approach</a>
+        <a href="#market">Market</a>
+        <a href="#operations">Operations</a>
+        <a href="#team">Team</a>
+        <a href="#financials">Financials</a>
+        <a href="#future">Future</a>
+        <a href="#gallery">Gallery</a>
+        <a href="#contact">Contact</a>
+    </nav>
+
+    <!-- ===== HOME ===== -->
+    <section id="home">
+        <h2>🌱 Welcome to KARAKUNKU FARM
+SOLAR-AGRICULTURAL ENTERPRISE
+</h2>
+        <p><strong>Karakunku Farm</strong> is a transformative solar‑powered agricultural demonstration and service enterprise based in <strong>Jarra Barrow Kunda, Lower River Region</strong>, The Gambia. We address two critical challenges: energy poverty in farming communities and the severe seasonal shortage of fresh vegetables caused by reliance on rain‑fed agriculture.</p>
+        <p>Our dual business model operates a commercial vegetable farm using solar‑powered irrigation and cold storage for year‑round production, while also serving as a solar service provider – demonstrating, selling, installing, and maintaining solar water pumps, home systems, and cold storage for other farmers and rural households.</p>
+        <p>Our farm is a living laboratory where farmers see solar technology working in real conditions. This “seeing‑is‑believing” approach is our most powerful marketing tool and addresses the primary barrier to solar adoption in rural areas.</p>
+        <p style="margin-top:20px;"><a href="#contact" class="cta-btn">📬 Get in Touch</a></p>
+    </section>
+
+    <!-- ===== ABOUT ===== -->
+    <section id="about">
+        <h2>📖 About Us</h2>
+        <p><strong>KARAKUNKU FARM
+SOLAR-AGRICULTURAL ENTERPRISE
+</strong> was established in 2020 by <strong>Lamin Ceesay</strong>, a practical farmer with over five years of hands‑on experience in vegetable production and farm management. The farm is situated on fertile land in Jarra Barrow Kunda, an area with strong agricultural potential but severely limited access to water infrastructure and electricity.</p>
+        <p>Through multiple planting cycles, we have gained invaluable experience in crop selection, market timing, production planning, and customer relationship management. We have built a loyal customer base among local households, market vendors, and food businesses.</p>
+        <p><strong>Vision:</strong> To become The Gambia’s leading provider of solar‑powered agricultural solutions, transforming rural farming communities through clean, affordable, and reliable energy access.</p>
+        <p><strong>Mission:</strong> To empower rural Gambian farmers with solar technology that enables sustainable, profitable agriculture while operating a commercially viable enterprise that demonstrates the power of clean energy.</p>
+        <p><strong>Legal Structure:</strong> Sole proprietorship formally registered in The Gambia under the ownership of Lamin Ceesay, with a dedicated bank account and proper financial records.</p>
+    </section>
+
+    <!-- ===== CHALLENGE ===== -->
+    <section id="challenge">
+        <h2>⚠️ The Challenge We Solve</h2>
+        <p>Rural Gambia faces three interconnected challenges that Karakunku Farm addresses:</p>
+        <ul>
+            <li><strong>Energy Problem:</strong> Over 60% of rural households lack electricity. Farmers suffer high costs from diesel dependency – a typical pump consumes 500 litres per season, costing 25,000–40,000 GMD annually.</li>
+            <li><strong>Food Problem:</strong> The Gambia imports over 60% of its food. Most farmers rely on rainfall, leading to severe seasonal patterns – vegetable oversupply in the rainy season and acute shortages in the dry season, causing price volatility and food insecurity.</li>
+            <li><strong>Knowledge Gap:</strong> Rural farmers lack access to affordable, reliable solar products and trustworthy installation services. Many have been burned by low‑quality products or poor installation.</li>
+        </ul>
+        <p>Our integrated approach solves these problems by demonstrating, distributing, installing, and maintaining solar technology while producing fresh vegetables year‑round.</p>
+    </section>
+
+    <!-- ===== OUR APPROACH ===== -->
+    <section id="solution">
+        <h2>💡 Our Solution</h2>
+        <ul>
+            <li><strong>Demonstration:</strong> Our farm is a living showroom where farmers see solar irrigation, lighting, and cold storage working in real agricultural conditions.</li>
+            <li><strong>Distribution:</strong> We source high‑quality, affordable solar equipment and offer flexible payment options through microfinance partnerships.</li>
+            <li><strong>Installation and Maintenance:</strong> Our trained technicians provide professional installation and ongoing maintenance services.</li>
+            <li><strong>Agricultural Production:</strong> Our farmers produce and supply fresh vegetables year‑round using solar‑powered irrigation, demonstrating commercial viability and meeting local demand.</li>
+        </ul>
+        <p>This integrated approach builds trust, reduces barriers to adoption, and creates a sustainable cycle of clean energy and food production.</p>
+    </section>
+
+    <!-- ===== MARKET ===== -->
+    <section id="market">
+        <h2>📊 Market Opportunity</h2>
+        <p><strong>Target Customers:</strong></p>
+        <ul>
+            <li><strong>Primary (Solar):</strong> Smallholder farmers, rural off‑grid households, women’s farming cooperatives, and community gardens in Lower River Region.</li>
+            <li><strong>Secondary (Vegetables):</strong> Local households, market vendors in Soma, retail shops, food businesses (restaurants, caterers), and institutional buyers (schools, hospitals).</li>
+        </ul>
+        <p><strong>Competitive Advantage:</strong> Our unique combination of farming expertise and solar knowledge, rural presence, demonstration farm, after‑sales support, and local trust gives us an unbeatable edge over urban‑based solar companies and seasonal smallholder farmers.</p>
+        <p><strong>Market Trends:</strong> Rising demand for fresh vegetables, growing preference for local produce, government support for renewable energy, increasing fuel costs, and climate change making rain‑fed farming unreliable all work in our favour.</p>
+    </section>
+
+    <!-- ===== OPERATIONS ===== -->
+    <section id="operations">
+        <h2>⚙️ Operations &amp; Production</h2>
+        <p><strong>Agricultural Products:</strong> We produce hot pepper, okra, onion, and cucumber using solar‑powered drip irrigation. Year‑round production ensures consistent supply.</p>
+        <p><strong>Solar Products &amp; Services:</strong> We offer solar water pumps, solar home systems, solar cold storage, and complete farm electrification packages. We also provide professional installation, maintenance, and training.</p>
+        <p><strong>Production Process:</strong> Land preparation → planting → irrigation (solar drip) → crop management → harvesting → post‑harvest handling (cold storage) → distribution.</p>
+        <p><strong>Solar Service Process:</strong> Customer identification → needs assessment → system design → sales & financing → installation → after‑sales support.</p>
+        <p>Our farm serves as a demonstration facility where visitors see all systems working together in an integrated, sustainable model.</p>
+    </section>
+
+    <!-- ===== TEAM ===== -->
+    <section id="team">
+        <h2>👥 Management &amp; Staffing</h2>
+        <p><strong>Owner &amp; General Manager:</strong> Lamin Ceesay – responsible for strategic direction, operations, marketing, and customer relations.</p>
+        <p><strong>Farm Supervisor:</strong> Oversees daily farm operations, crop planning, planting schedules, harvest management, and quality control.</p>
+        <p><strong>Solar Technician:</strong> Manages solar installations, maintenance services, customer training, and equipment inventory.</p>
+        <p><strong>Farm Workers:</strong> Handle planting, crop management, harvesting, packaging, and deliveries.</p>
+        <p><strong>Staffing Plan:</strong> Year 1 – 5 staff; Year 2 – 8 staff; Year 3 – 12 staff. We prioritise hiring local youth and women, and we provide continuous training in solar installation, agriculture, and business management.</p>
+    </section>
+
+    <!-- ===== FINANCIALS ===== -->
+    <section id="financials">
+        <h2>💰 Financials</h2>
+        <p><strong>Funding Requested (ROGEAP Matching Grant):</strong> 25,000 USD</p>
+        <p><strong>Co‑financing Committed (25%):</strong> 6,250 USD (5,000 from Youth Enterprise Development Fund + 1,250 from microfinance loan)</p>
+        <p><strong>Total Project Cost:</strong> 31,250 USD</p>
+        <p><strong>Project Budget (key items):</strong></p>
+        <ul>
+            <li>Solar panels, batteries, inverters: 15,500 USD</li>
+            <li>Borehole &amp; solar pump: 5,500 USD</li>
+            <li>Drip irrigation (3 ha): 3,500 USD</li>
+            <li>Solar cold storage: 3,500 USD</li>
+            <li>Inventory &amp; tools: 2,500 USD</li>
+            <li>Training &amp; contingency: 2,750 USD</li>
+        </ul>
+        <p><strong>Revenue Projections (GMD):</strong></p>
+        <ul>
+            <li>Year 1: 900,000 (vegetables 500k, solar products 300k, services 100k)</li>
+            <li>Year 2: 1,600,000</li>
+            <li>Year 3: 2,600,000</li>
+        </ul>
+        <p><strong>Profit &amp; Loss (after tax):</strong></p>
+        <ul>
+            <li>Year 1: Net profit 168,750 GMD (18.8% margin)</li>
+            <li>Year 2: Net profit 363,750 GMD (22.7% margin)</li>
+            <li>Year 3: Net profit 645,000 GMD (24.8% margin)</li>
+        </ul>
+        <p>These projections demonstrate strong financial viability and growth potential.</p>
+    </section>
+
+    <!-- ===== FUTURE ===== -->
+    <section id="future">
+        <h2>🚀 Future Plans</h2>
+        <p><strong>Short‑Term (Year 1):</strong> Install comprehensive solar electrification, expand to 1 ha, establish showroom, train 3 technicians, reach 30 farming households.</p>
+        <p><strong>Medium‑Term (Years 2‑3):</strong> Expand to 3 ha, reach 150 households, partner with microfinance institutions, employ 10 staff, establish a regional training centre, achieve 1.5 million GMD annual revenue.</p>
+        <p><strong>Long‑Term (Years 4‑5):</strong> Become the recognised solar‑agricultural brand across Lower River Region and beyond; develop a pay‑as‑you‑go model; establish branches in two additional regions; create 50 direct and indirect jobs; become a model for solar‑powered agriculture in West Africa.</p>
+    </section>
+
+    <!-- ===== GALLERY – All 7 images, fully visible ===== -->
+    <section id="gallery">
+        <h2>🖼️ Gallery</h2>
+        <div class="gallery">
+            <!-- The inline style attributes have been removed – the gallery CSS now handles sizing and ensures full visibility -->
+            <img src="https://github.com/karakunkufarmsolarenterprise/.co.gm/blob/main/IMG-20260813-WA0002.jpg?raw=true" alt="Farm image 1">
+            <img src="https://github.com/karakunkufarmsolarenterprise/.co.gm/blob/main/IMG-20260813-WA0001.jpg?raw=true" alt="Farm image 2">
+            <img src="https://github.com/karakunkufarmsolarenterprise/.co.gm/blob/main/IMG-20260701-WA0005.jpg?raw=true" alt="Farm image 3">
+            <img src="https://github.com/karakunkufarmsolarenterprise/.co.gm/blob/main/IMG-20260331-WA0031.jpg?raw=true" alt="Farm image 4">
+            <img src="https://github.com/karakunkufarmsolarenterprise/.co.gm/blob/main/IMG-20260331-WA0030.jpg?raw=true" alt="Farm image 5">
+            <img src="https://github.com/karakunkufarmsolarenterprise/.co.gm/blob/main/IMG-20260331-WA0029.jpg?raw=true" alt="Farm image 6">
+            <img src="https://github.com/karakunkufarmsolarenterprise/.co.gm/blob/main/IMG-20260813-WA0012.jpg?raw=true" alt="Farm image 7">
+        </div>
+    </section>
+
+    <!-- ===== CONTACT ===== -->
+    <section id="contact">
+        <h2>📬 Contact Us</h2>
+        <p>We look forward to hearing from you – whether you are a farmer, customer, partner, or investor.</p>
+        <p><strong>📍 Location:</strong> Jarra Barrow Kunda, Lower River Region, The Gambia</p>
+        <p><strong>📞 Phone:</strong> <a href="tel:+2203491934">349 1934</a></p>
+        <p><strong>📧 Email:</strong> <a href="mailto:karakunkufarm50@gmail.com">karakunkunutr50@gmail.com</a> (placeholder – use phone for immediate contact)</p>
+        <p><strong>💬 WhatsApp:</strong> <a href="https://wa.me/+2203491934" target="_blank">+220 349 1934</a></p>
+    </section>
+
+    <footer>
+        <p>© 2026 <span>KARAKUNKU FARM
+SOLAR-AGRICULTURAL ENTERPRISE
+</span> – Powering a brighter future for Gambian farmers. ☀️</p>
+    </footer>
+
 </div>
-
-<!-- Modal -->
-<div class="modal" id="imageModal">
-    <span class="close" id="closeModal">&times;</span>
-    <span class="nav prev" id="prevImage">&#10094;</span>
-    <span class="nav next" id="nextImage">&#10095;</span>
-
-    <div class="modal-image-wrapper" id="modalWrapper">
-        <img id="modalImage" src="" alt="Zoomable image">
-    </div>
-
-    <div class="zoom-controls">
-        <button id="zoomOutBtn">−</button>
-        <span id="zoomLevelDisplay">100%</span>
-        <button id="zoomInBtn">+</button>
-    </div>
-    <div class="image-counter" id="imageCounter">1 / 7</div>
-</div>
-
-<script>
-    (function() {
-        // ----- Image Data (All 7 karakunkufarmsolarenterprise URLs) -----
-        const images = [
-            "https://github.com/karakunkufarmsolarenterprise/.co.gm/blob/main/IMG-20260813-WA0002.jpg?raw=true",
-            "https://github.com/karakunkufarmsolarenterprise/.co.gm/blob/main/IMG-20260813-WA0001.jpg?raw=true",
-            "https://github.com/karakunkufarmsolarenterprise/.co.gm/blob/main/IMG-20260701-WA0005.jpg?raw=true",
-            "https://github.com/karakunkufarmsolarenterprise/.co.gm/blob/main/IMG-20260331-WA0031.jpg?raw=true",
-            "https://github.com/karakunkufarmsolarenterprise/.co.gm/blob/main/IMG-20260331-WA0030.jpg?raw=true",
-            "https://github.com/karakunkufarmsolarenterprise/.co.gm/blob/main/IMG-20260331-WA0029.jpg?raw=true",
-            "https://github.com/karakunkufarmsolarenterprise/.co.gm/blob/main/IMG-20260813-WA0012.jpg?raw=true"
-        ];
-
-        // ----- DOM references -----
-        const gallery = document.getElementById('imageGallery');
-        const modal = document.getElementById('imageModal');
-        const modalImg = document.getElementById('modalImage');
-        const modalWrapper = document.getElementById('modalWrapper');
-        const closeBtn = document.getElementById('closeModal');
-        const prevBtn = document.getElementById('prevImage');
-        const nextBtn = document.getElementById('nextImage');
-        const zoomInBtn = document.getElementById('zoomInBtn');
-        const zoomOutBtn = document.getElementById('zoomOutBtn');
-        const zoomLevelDisplay = document.getElementById('zoomLevelDisplay');
-        const imageCounter = document.getElementById('imageCounter');
-
-        let currentIndex = 0;
-
-        // ----- Zoom & Pan state -----
-        let scale = 1;
-        let posX = 0;
-        let posY = 0;
-        let isDragging = false;
-        let startX = 0;
-        let startY = 0;
-        let lastPosX = 0;
-        let lastPosY = 0;
-
-        // ----- Render gallery thumbnails -----
-        function renderGallery() {
-            gallery.innerHTML = '';
-            images.forEach((src, index) => {
-                const img = document.createElement('img');
-                img.src = src;
-                img.alt = `Image ${index + 1}`;
-                img.loading = 'lazy';
-                img.addEventListener('click', () => openModal(index));
-                gallery.appendChild(img);
-            });
-        }
-
-        // ----- Open Modal -----
-        function openModal(index) {
-            currentIndex = index;
-            updateModalImage();
-            modal.classList.add('active');
-            document.body.style.overflow = 'hidden'; // prevent scroll
-            resetZoomAndPan();
-        }
-
-        function closeModal() {
-            modal.classList.remove('active');
-            document.body.style.overflow = '';
-        }
-
-        // ----- Update image src + counter -----
-        function updateModalImage() {
-            modalImg.src = images[currentIndex];
-            imageCounter.textContent = `${currentIndex + 1} / ${images.length}`;
-        }
-
-        // ----- Reset zoom/pan -----
-        function resetZoomAndPan() {
-            scale = 1;
-            posX = 0;
-            posY = 0;
-            applyTransform();
-            zoomLevelDisplay.textContent = '100%';
-        }
-
-        // ----- Apply transform to image -----
-        function applyTransform() {
-            modalImg.style.transform = `translate(${posX}px, ${posY}px) scale(${scale})`;
-        }
-
-        // ----- Zoom in/out -----
-        function zoomIn() {
-            scale = Math.min(scale * 1.2, 5); // max zoom 5x
-            zoomLevelDisplay.textContent = Math.round(scale * 100) + '%';
-            applyTransform();
-        }
-
-        function zoomOut() {
-            scale = Math.max(scale / 1.2, 0.3); // min zoom 0.3x
-            zoomLevelDisplay.textContent = Math.round(scale * 100) + '%';
-            applyTransform();
-        }
-
-        // ----- Navigation -----
-        function prevImage() {
-            currentIndex = (currentIndex - 1 + images.length) % images.length;
-            updateModalImage();
-            resetZoomAndPan();
-        }
-
-        function nextImage() {
-            currentIndex = (currentIndex + 1) % images.length;
-            updateModalImage();
-            resetZoomAndPan();
-        }
-
-        // ----- Mouse wheel zoom on modal wrapper -----
-        modalWrapper.addEventListener('wheel', (e) => {
-            e.preventDefault();
-            const delta = e.deltaY > 0 ? -1 : 1;
-            if (delta > 0) zoomIn();
-            else zoomOut();
-        }, { passive: false });
-
-        // ----- Drag to pan -----
-        modalImg.addEventListener('mousedown', (e) => {
-            if (scale === 1) return; // no pan needed at default zoom
-            isDragging = true;
-            startX = e.clientX;
-            startY = e.clientY;
-            lastPosX = posX;
-            lastPosY = posY;
-            modalImg.style.cursor = 'grabbing';
-        });
-
-        window.addEventListener('mousemove', (e) => {
-            if (!isDragging) return;
-            const dx = e.clientX - startX;
-            const dy = e.clientY - startY;
-            posX = lastPosX + dx;
-            posY = lastPosY + dy;
-            applyTransform();
-        });
-
-        window.addEventListener('mouseup', () => {
-            if (isDragging) {
-                isDragging = false;
-                modalImg.style.cursor = 'grab';
-            }
-        });
-
-        // Touch support for mobile panning
-        let touchStartX = 0, touchStartY = 0;
-        let touchLastX = 0, touchLastY = 0;
-        modalImg.addEventListener('touchstart', (e) => {
-            if (scale === 1) return;
-            const touch = e.touches[0];
-            touchStartX = touch.clientX;
-            touchStartY = touch.clientY;
-            touchLastX = posX;
-            touchLastY = posY;
-        }, { passive: true });
-
-        modalImg.addEventListener('touchmove', (e) => {
-            if (scale === 1) return;
-            e.preventDefault();
-            const touch = e.touches[0];
-            const dx = touch.clientX - touchStartX;
-            const dy = touch.clientY - touchStartY;
-            posX = touchLastX + dx;
-            posY = touchLastY + dy;
-            applyTransform();
-        }, { passive: false });
-
-        // ----- Event listeners for buttons -----
-        closeBtn.addEventListener('click', closeModal);
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) closeModal();
-        });
-        prevBtn.addEventListener('click', prevImage);
-        nextBtn.addEventListener('click', nextImage);
-        zoomInBtn.addEventListener('click', zoomIn);
-        zoomOutBtn.addEventListener('click', zoomOut);
-
-        // Keyboard shortcuts
-        document.addEventListener('keydown', (e) => {
-            if (!modal.classList.contains('active')) return;
-            if (e.key === 'Escape') closeModal();
-            if (e.key === 'ArrowRight') nextImage();
-            if (e.key === 'ArrowLeft') prevImage();
-            if (e.key === '+' || e.key === '=') { e.preventDefault(); zoomIn(); }
-            if (e.key === '-') { e.preventDefault(); zoomOut(); }
-        });
-
-        // ----- Initialize -----
-        renderGallery();
-
-        // Ensure the first image is loaded into modal template (just in case)
-        modalImg.src = images[0];
-
-        console.log('Gallery ready! Click any image to zoom and pan.');
-    })();
-</script>
-
 </body>
 </html>
